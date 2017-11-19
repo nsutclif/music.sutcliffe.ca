@@ -4,6 +4,9 @@ Parameters:
   DomainName:
     Type: String
     Default: music.sutcliffe.ca
+  CertificateArn:
+    Type: String
+    AllowedPattern: "arn:aws:acm:us-east-1.*"
 
 Resources:
   S3Bucket:
@@ -72,10 +75,11 @@ Resources:
             QueryString: 'false'
             Cookies:
               Forward: none
-          ViewerProtocolPolicy: allow-all
+          ViewerProtocolPolicy: redirect-to-https
         PriceClass: PriceClass_100
         ViewerCertificate:
-          CloudFrontDefaultCertificate: 'true'
+          AcmCertificateArn: !Ref CertificateArn
+          SslSupportMethod: sni-only
 
 Outputs:
   CloudFrontDomainName:
