@@ -12,7 +12,6 @@ Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
-      AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
@@ -25,15 +24,12 @@ Resources:
         Id: MyPolicy
         Version: 2012-10-17
         Statement:
-          - Sid: PublicReadForGetBucketObjects
+          - Sid: CloudFrontReadForGetBucketObjects
             Effect: Allow
-            Principal: '*'
+            Principal:
+              CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
             Action: 's3:GetObject'
-            Resource: !Join 
-              - ''
-              - - 'arn:aws:s3:::'
-                - !Ref S3Bucket
-                - /*
+            Resource: !Sub '${S3Bucket.Arn}/*' 
       Bucket: !Ref S3Bucket
 
   OriginAccessIdentity:
